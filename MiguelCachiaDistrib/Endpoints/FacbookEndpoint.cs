@@ -46,7 +46,8 @@ namespace MiguelCachiaDistrib
         {
 
             StringBuilder strb = new StringBuilder(baseLink);
-            strb.Append("me?fields=");
+            strb.Append("me?fields=id");
+            if (valueEmail == true || valueBirthDate == true || valueName == true) { strb.Append(","); }
             if (valueName) { strb.Append("name"); }
             if (valueName && valueEmail || valueName && valueBirthDate) { strb.Append(","); }
             if (valueEmail) { strb.Append("email"); }
@@ -74,6 +75,7 @@ namespace MiguelCachiaDistrib
             strb.Append(AccesTokenFB);
             return strb.ToString();
         }
+
        
           public string GetcpagepostEndpoint(String postId,String pageToken,String comment)
     {
@@ -86,7 +88,7 @@ namespace MiguelCachiaDistrib
         strb.Append(comment);
         return strb.ToString();
     }
-
+      
 
     public Dictionary<string, string> EndpointURL() 
         {

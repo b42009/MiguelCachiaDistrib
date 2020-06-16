@@ -250,6 +250,7 @@
     <Compile Include="Models\FacbookFeedModel.cs" />
     <Compile Include="Models\FacbookImageModel.cs" />
     <Compile Include="Models\FacbookLikeModel.cs" />
+    <Compile Include="Models\FacbookPagefeedmodel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\FacbookProfileModel.cs" />
     <Compile Include="Models\Preferencmodel.cs" />

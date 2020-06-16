@@ -64,6 +64,7 @@
                         + sessionStorage.getItem("accessToken")
                 },
                 success: function (data) {
+                    
                     console.log(data);
                     getImages(data)
                    
@@ -108,7 +109,7 @@
             });
             
             $.ajax({
-                url: '/api/Fbpost/GetAccountt?token=' + sessionStorage.getItem("accessTokenFb"),
+                url: '/api/Fbpost/GetAccountt?Token=' + sessionStorage.getItem("accessTokenFb"),
                 method: 'GET',
 
                 headers: {
@@ -117,6 +118,13 @@
                 },
                 success: function (out) {
                     console.log(out);
+                    console.log(out.data[0].access_token);
+                    console.log(out.data[0].id);
+                    sessionStorage.setItem("ComentAccesToken", out.data[0].access_token)
+                    sessionStorage.setItem("PageId", out.data[0].id)
+                    GetPagePost();
+
+                    
                     
                 },
                 error: function (jQXHR) {
@@ -190,7 +198,45 @@
         }
 
 
-   
+        function GetPagePost() {
+            $.ajax({
+                url: '/api/Fbpost/GetPagePost?token=' + sessionStorage.getItem("accessTokenFb") + '&pageid=' + sessionStorage.getItem("PageId"),
+                method: 'GET',
+
+                headers: {
+                    'Authorization': 'Bearer '
+                        + sessionStorage.getItem("accessToken")
+                },
+                success: function (data) {
+                    console.log(data);
+                    let output = '<h3> page Post </h3>';
+                    output += '<input id = "MyComment" type = "text" onclick="comment()" /> ';
+
+                    for (let i in data.data) {
+                        if (data.data[i].message) {
+                            output += `
+              <div class="well">
+                ${data.data[i].message} <span>${data.data[i].created_time}</span>
+              </div>
+            `;
+                        }
+                        document.getElementById('Page').innerHTML = output;
+                    }
+                  
+                },
+                error: function (jQXHR) {
+                    // If status code is 401, access token expired, so
+                    // redirect the user to the login page
+                    if (jQXHR.status == "401") {
+                        $('#errorModal').modal('show');
+                    }
+                    else {
+                        $('#divErrorText').text(jqXHR.responseText);
+                        $('#divError').show('fade');
+                    }
+                }
+            });
+        }
     function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
         if (response.status === 'connected') {
             sessionStorage.setItem("accessTokenFb", response.authResponse.accessToken);
@@ -274,7 +320,7 @@
         //inserting tabils in the div
         function buildFeed(feed) {
             let output = '<h3>Latest Posts</h3>';
-            console.log(feed[0]);
+           
             for (let i in feed.data) {
                 if (feed.data[i].message) {
                     output += `
@@ -288,21 +334,22 @@
             document.getElementById('feedd').innerHTML = output;
         }
         function buldprofile(feed) {
-            let output = `<h3>Profile</h3>
-                <label> Name</label>`;
+            let output = '<h3>Profile</h3>';
+            output +='<label> Name</label>';
             if (feed.name != null) {
-                output += ` <input type="checkbox" value="true" id="name" class="prefcheckbox" />`;
-            }
-            else { output += ` < input type="checkbox" value="" id="name" class="prefcheckbox" />`;}
+                output += ` <input type="checkbox" value="" id="name" class="prefcheckbox "checked />`;
+
+            } else { output += ` <input type="checkbox" value="" id="name" class="prefcheckbox" />`; }
+          
             output +=`<label> Email</label> `;
         if (feed.email != null) {
-            output += ` <input type="checkbox" value="true" id="email" class="prefcheckbox" />`;
+            output += ` <input type="checkbox" value="" id="email" class="prefcheckbox "checked />`;
 
         } else { output += ` <input type="checkbox" value="" id="email" class="prefcheckbox" />`;}
 
             output += `<label> Birthday</label> `;
-        if (feed.email != null) {
-            output += ` <input type="checkbox" value="" id="birthdate" class="prefcheckbox" />`;
+            if (feed.birthday != null) {
+            output += ` <input type="checkbox" value="" id="birthdate" class="prefcheckbox "checked />`;
 
         } else {
             output += `<input type="checkbox" value="" id="birthdate" class="prefcheckbox" />`;
@@ -310,13 +357,13 @@
             if (feed.name != null) {
              //   $("#name").prop("checked", true);
                 output += `  <div class="well">
-                 Email:  ${feed.name}
+                 Name:  ${feed.name}
                </div>`;
             }
             if (feed.email != null) {
               //  $("#email").attr('checked', 'checked');
                 output += ` <div class="well">
-                 Name:  ${feed.email}
+                 Email:  ${feed.email}
                </div>  `;
             }
 
@@ -325,23 +372,14 @@
                 output += `  <div class="well">
                  Birth Date:  ${feed.birthday}
                </div>  `;
-            }
-
-           
-                
-                
-            
-                
-
-           
-                
+            } 
 
             document.getElementById('profiel').innerHTML = output;
         }
 
         function buildlikes(feed) {
             let output = '<h3>Pages Liked</h3>';
-            console.log(feed[0]);
+          
             for (let i in feed.data) {
                 if (feed.data[i].name) {
                     output += `
@@ -378,6 +416,13 @@
                 $("#likes").toggle();
             });
         });
+        $(document).ready(function () {
+            $("#showpage").click(function () {
+
+                $("#Page").toggle();
+            });
+        });
+        
         
         $(document).ready(function () {
             $("#Showpic").click(function () {
@@ -390,7 +435,8 @@
           
             console.log(sessionStorage.getItem("UserEmail"));
             $.ajax({
-                url: '/api/Fbpost/preferences?token=' + sessionStorage.getItem("accessTokenFb") + '&email=' + sessionStorage.getItem("UserEmail") + '&valueEmail=' + $("#email").prop("checked") + '&valueBirthDate=' + $("#birthdate").prop("checked") + '&valuename=' + $("#name").prop("checked"),
+               
+            url: '/api/Fbpost/preferences?token=' + sessionStorage.getItem("ComentAccesToken") + '&email=' + sessionStorage.getItem("UserEmail") + '&valueEmail=' + $("#email").prop("checked") + '&valueBirthDate=' + $("#birthdate").prop("checked") + '&valuename=' + $("#name").prop("checked"),
                 method: 'GET',
 
                 headers: {
@@ -414,8 +460,39 @@
                 }
             });
 
-        }
+        } 
         );
+        function comment() {
+            var input = document.getElementById("MyComment");
+            input.addEventListener("keyup", function (event) {
+                if (event.keyCode === 13) {
+                    $.ajax({
+                        url: '/api/Fbpost/Commenting?token=' + sessionStorage.getItem("ComentAccesToken") + '&PageId=' + sessionStorage.getItem("PageId") + '&message=' + document.getElementById("MyComment").value,
+                        method: 'POST',
+
+                        headers: {
+                            'Authorization': 'Bearer '
+                                + sessionStorage.getItem("accessToken")
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            buldprofile(data);
+                        },
+                        error: function (jQXHR) {
+                            // If status code is 401, access token expired, so
+                            // redirect the user to the login page
+                            if (jQXHR.status == "401") {
+                                $('#errorModal').modal('show');
+                            }
+                            else {
+                                $('#divErrorText').text(jqXHR.responseText);
+                                $('#divError').show('fade');
+                            }
+                        }
+                    });
+                }
+            });
+        }
 
     </script>
     <div class="container-fluid  ">
@@ -440,6 +517,7 @@
                 <button id="showprofile">ShowProfiles</button>
                 <button id="showproflikes">ShowLikes</button>
                 <button id="Showpic">ShowPic</button>
+                <button id="showpage">ShowPage</button>
                 <div id="Like"></div>
                 <br />
                 <div style="display:none" id="feedd"></div>
@@ -448,6 +526,9 @@
                 </div>
                 <div style="display:none" id="likes"></div>
                 <div style="display:none" id="pic"></div>
+                <div style="display:none" id="Page">
+                   
+                </div>
 
             </div>
             <div class="col-md-6 col-lg-6 col-sm-6" style=" background-color: orangered">

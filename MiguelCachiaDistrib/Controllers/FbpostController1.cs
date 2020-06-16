@@ -64,6 +64,7 @@ namespace MiguelCachiaDistrib.Controllers
 
         }
         [HttpGet]
+
         [Route("Getlike")]
         // GET api/<controller>/5
         public FacbookLikeModel Getlike(String Token)
@@ -138,7 +139,37 @@ namespace MiguelCachiaDistrib.Controllers
 
 
         }
+      
+          [HttpGet]
+        [Route("GetPagePost")]
+        // GET api/<controller>/5
+        public FacbookFeedModel GetPagePost(string Token,string pageid)
+        {
+            fblink.AccesTokenFB = Token;
+            clientt.endpoint = fblink.GetcpagepostEndpoint(pageid);
+
+            String Data = clientt.Request(HttpVerb.GET, fblink.EndpointURL());
+            JSONParser<FacbookFeedModel> jsonp = new JSONParser<FacbookFeedModel>();
+            FacbookFeedModel fbm = new FacbookFeedModel();
+            fbm = jsonp.parseJson(Data);
+            return fbm;
 
 
+        }
+        url: '/api/Fbpost/Commenting?token=' + sessionStorage.getItem("ComentAccesToken") + '&PageId=' + sessionStorage.getItem("PageId") + '&message=' + document.getElementById("MyComment").value,
+
+          [HttpPost]
+        [Route("Commenting")]
+        // GET api/<controller>/5
+        public void Commenting(string Token, string PageId,string message)
+        {
+            fblink.AccesTokenFB = Token;
+            clientt.endpoint = fblink.GetcpagepostEndpoint(Token, PageId, message);
+
+            String Data = clientt.Request(HttpVerb.GET, fblink.EndpointURL());
+          
+
+
+        }
     }
 }
