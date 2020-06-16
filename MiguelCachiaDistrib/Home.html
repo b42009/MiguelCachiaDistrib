@@ -116,7 +116,7 @@
                         + sessionStorage.getItem("accessToken")
                 },
                 success: function (out) {
-                    console.log(out.data.access_token);
+                    console.log(out);
                     
                 },
                 error: function (jQXHR) {
@@ -288,23 +288,24 @@
             document.getElementById('feedd').innerHTML = output;
         }
         function buldprofile(feed) {
-            let output = `<h3>Profile</h3><label> Name</label>`;
+            let output = `<h3>Profile</h3>
+                <label> Name</label>`;
             if (feed.name != null) {
-                output += `    < input type="checkbox" value="true" id="name" class="prefcheckbox" />`;
+                output += ` <input type="checkbox" value="true" id="name" class="prefcheckbox" />`;
             }
-            else { output += `    < input type="checkbox" value="" id="name" class="prefcheckbox" />`;}
+            else { output += ` < input type="checkbox" value="" id="name" class="prefcheckbox" />`;}
             output +=`<label> Email</label> `;
         if (feed.email != null) {
-            output += ` <input type="checkbox" value="true" id="email" class="prefcheckbox" /><label>Birth Date</label><input type="checkbox" value="" id="birthdate" class="prefcheckbox" />`;
+            output += ` <input type="checkbox" value="true" id="email" class="prefcheckbox" />`;
 
-        } else { output += ` <input type="checkbox" value="" id="email" class="prefcheckbox" /><label>Birth Date</label><input type="checkbox" value="" id="birthdate" class="prefcheckbox" />`;}
+        } else { output += ` <input type="checkbox" value="" id="email" class="prefcheckbox" />`;}
 
-            output += ` `;
+            output += `<label> Birthday</label> `;
         if (feed.email != null) {
-            output += ` <input type="checkbox" value="true" id="birthdate" class="prefcheckbox" /><label>Birth Date</label><input type="checkbox" value="" id="birthdate" class="prefcheckbox" />`;
+            output += ` <input type="checkbox" value="" id="birthdate" class="prefcheckbox" />`;
 
         } else {
-            output += ` <input type="checkbox" value="" id="birthdate" class="prefcheckbox" /><label>Birth Date</label><input type="checkbox" value="" id="birthdate" class="prefcheckbox" />`;
+            output += `<input type="checkbox" value="" id="birthdate" class="prefcheckbox" />`;
 }
             if (feed.name != null) {
              //   $("#name").prop("checked", true);

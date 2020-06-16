@@ -21,18 +21,6 @@ namespace MiguelCachiaDistrib.Models
         public string created_time { get; set; }
     }
 
-    public partial class Paging
-    {
-        public Cursors cursors { get; set; }
-    }
-
-    public partial class Cursors
-    {
-
-        public string before { get; set; }
-
-     
-        public string after { get; set; }
-    }
+   
 }
 

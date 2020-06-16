@@ -61,7 +61,7 @@ namespace MiguelCachiaDistrib
         {
             StringBuilder strb = new StringBuilder(baseLink);
            
-            strb.Append("me/accounts&access_token=");
+            strb.Append("me/accounts?access_token=");
             strb.Append(AccesTokenFB);
             return strb.ToString();
         }
@@ -70,7 +70,7 @@ namespace MiguelCachiaDistrib
         {
             StringBuilder strb = new StringBuilder(baseLink);
             strb.Append(pageid);
-            strb.Append("/feed&access_token=");
+            strb.Append("/feed?access_token=");
             strb.Append(AccesTokenFB);
             return strb.ToString();
         }
