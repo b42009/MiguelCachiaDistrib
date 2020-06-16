@@ -174,5 +174,21 @@ namespace MiguelCachiaDistrib.Controllers
 
 
         }
+        [HttpPost]
+        [Route("Postcoment")]
+        // GET api/<controller>/5
+        public facbookcommentclass Postcoment(string Token, string postid,string comment)
+        {
+            fblink.AccesTokenFB = Token;
+            clientt.endpoint = fblink.Getcomments(Token, postid);
+
+            String Data = clientt.Request(HttpVerb.GET, fblink.EndpointURL());
+            JSONParser<facbookcommentclass> jsonp = new JSONParser<facbookcommentclass>();
+            facbookcommentclass fbm = new facbookcommentclass();
+            fbm = jsonp.parseJson(Data);
+            return fbm;
+
+
+        }
     }
 }
