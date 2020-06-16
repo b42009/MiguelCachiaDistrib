@@ -119,8 +119,8 @@
                 success: function (out) {
                     console.log(out);
                     console.log(out.data[0].access_token);
-                    console.log(out.data[0].id);
-                    sessionStorage.setItem("ComentAccesToken", out.data[0].access_token)
+                    console.log(out);
+                    sessionStorage.setItem("ComentAccesToken", out.data[0].access_token);
                     sessionStorage.setItem("PageId", out.data[0].id)
                     GetPagePost();
 
@@ -200,7 +200,7 @@
 
         function GetPagePost() {
             $.ajax({
-                url: '/api/Fbpost/GetPagePost?token=' + sessionStorage.getItem("accessTokenFb") + '&pageid=' + sessionStorage.getItem("PageId"),
+                url: '/api/Fbpost/GetPagePost?token=' + sessionStorage.getItem("ComentAccesToken") + '&pageid=' + sessionStorage.getItem("PageId"),
                 method: 'GET',
 
                 headers: {
@@ -210,15 +210,47 @@
                 success: function (data) {
                     console.log(data);
                     let output = '<h3> page Post </h3>';
-                    output += '<input id = "MyComment" type = "text" onclick="comment()" /> ';
+                   
 
                     for (let i in data.data) {
                         if (data.data[i].message) {
                             output += `
               <div class="well">
-                ${data.data[i].message} <span>${data.data[i].created_time}</span>
-              </div>
-            `;
+                ${data.data[i].message}`;
+                      $.ajax({
+                          url: '/api/Fbpost/Getcomment?Token=' + sessionStorage.getItem("accessTokenFb") + '&postid=' + data.data[i].id,
+                        method: 'GET',
+
+                        headers: {
+                            'Authorization': 'Bearer '
+                                + sessionStorage.getItem("accessToken")
+                        },
+                          success: function (data) {
+                              for (let a in data.data) {
+                                 
+                                      output += '<p>comment: ' + data.data[a].message + '</p > ';
+                                      
+                                      console.log(data.data[a].message);
+                                  
+                              }
+                            
+                            },
+                        error: function (jQXHR) {
+                            // If status code is 401, access token expired, so
+                            // redirect the user to the login page
+                            if (jQXHR.status == "401") {
+                                $('#errorModal').modal('show');
+                            }
+                            else {
+                                $('#divErrorText').text(jqXHR.responseText);
+                                $('#divError').show('fade');
+                            }
+                        }
+                    });
+                    
+                    
+                            output += `</div>`;
+
                         }
                         document.getElementById('Page').innerHTML = output;
                     }
@@ -436,7 +468,7 @@
             console.log(sessionStorage.getItem("UserEmail"));
             $.ajax({
                
-            url: '/api/Fbpost/preferences?token=' + sessionStorage.getItem("ComentAccesToken") + '&email=' + sessionStorage.getItem("UserEmail") + '&valueEmail=' + $("#email").prop("checked") + '&valueBirthDate=' + $("#birthdate").prop("checked") + '&valuename=' + $("#name").prop("checked"),
+                url: '/api/Fbpost/preferences?token=' + sessionStorage.getItem("accessTokenFb") + '&email=' + sessionStorage.getItem("UserEmail") + '&valueEmail=' + $("#email").prop("checked") + '&valueBirthDate=' + $("#birthdate").prop("checked") + '&valuename=' + $("#name").prop("checked"),
                 method: 'GET',
 
                 headers: {
@@ -467,8 +499,8 @@
             input.addEventListener("keyup", function (event) {
                 if (event.keyCode === 13) {
                     $.ajax({
-                        url: '/api/Fbpost/Commenting?token=' + sessionStorage.getItem("ComentAccesToken") + '&PageId=' + sessionStorage.getItem("PageId") + '&message=' + document.getElementById("MyComment").value,
-                        method: 'POST',
+                        url: '/api/Fbpost/Commenting?token=' + sessionStorage.getItem("ComentAccesToken") + '&postid=' + sessionStorage.getItem("PageId") ,
+                        method: 'GET',
 
                         headers: {
                             'Authorization': 'Bearer '
@@ -476,7 +508,7 @@
                         },
                         success: function (data) {
                             console.log(data);
-                            buldprofile(data);
+                          
                         },
                         error: function (jQXHR) {
                             // If status code is 401, access token expired, so

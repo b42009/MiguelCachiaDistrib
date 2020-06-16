@@ -77,15 +77,16 @@ namespace MiguelCachiaDistrib
         }
 
        
-          public string GetcpagepostEndpoint(String postId,String pageToken,String comment)
+          public string Getcomments(String pageToken, String postId)
     {
         StringBuilder strb = new StringBuilder(baseLink);
         strb.Append(postId);
-        strb.Append("/comments&access_token=");
-        strb.Append(pageToken);
-        strb.Append("&message");
+            strb.Append("/comments");
+            
 
-        strb.Append(comment);
+            strb.Append("?access_token=");
+        strb.Append(pageToken);
+      
         return strb.ToString();
     }
       

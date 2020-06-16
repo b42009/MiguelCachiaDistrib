@@ -156,18 +156,21 @@ namespace MiguelCachiaDistrib.Controllers
 
 
         }
-        url: '/api/Fbpost/Commenting?token=' + sessionStorage.getItem("ComentAccesToken") + '&PageId=' + sessionStorage.getItem("PageId") + '&message=' + document.getElementById("MyComment").value,
+      
 
-          [HttpPost]
-        [Route("Commenting")]
+          [HttpGet]
+        [Route("Getcomment")]
         // GET api/<controller>/5
-        public void Commenting(string Token, string PageId,string message)
+        public facbookcommentclass Getcomment(string Token, string postid)
         {
             fblink.AccesTokenFB = Token;
-            clientt.endpoint = fblink.GetcpagepostEndpoint(Token, PageId, message);
+            clientt.endpoint = fblink.Getcomments(Token, postid);
 
             String Data = clientt.Request(HttpVerb.GET, fblink.EndpointURL());
-          
+            JSONParser<facbookcommentclass> jsonp = new JSONParser<facbookcommentclass>();
+            facbookcommentclass fbm = new facbookcommentclass();
+            fbm = jsonp.parseJson(Data);
+            return fbm;
 
 
         }
